@@ -51,6 +51,8 @@ type CreateClusterOptions struct {
 	MasterSize           string
 	MasterCount          int32
 	NodeCount            int32
+	MasterIAMRole        string
+	NodeIAMRole          string
 	Project              string
 	KubernetesVersion    string
 	OutDir               string
@@ -146,6 +148,10 @@ func NewCmdCreateCluster(f *util.Factory, out io.Writer) *cobra.Command {
 	cmd.Flags().StringVar(&options.NodeSize, "node-size", options.NodeSize, "Set instance size for nodes")
 
 	cmd.Flags().StringVar(&options.MasterSize, "master-size", options.MasterSize, "Set instance size for masters")
+
+	cmd.Flags().StringVar(&options.NodeIAMRole, "node-iam-role", options.NodeIAMRole, "Set IAM role for nodes")
+
+	cmd.Flags().StringVar(&options.MasterIAMRole, "master-iam-role", options.MasterIAMRole, "Set IAM role for masters")
 
 	cmd.Flags().StringVar(&options.VPCID, "vpc", options.VPCID, "Set to use a shared VPC")
 	cmd.Flags().StringVar(&options.NetworkCIDR, "network-cidr", options.NetworkCIDR, "Set to override the default network CIDR")
@@ -354,6 +360,7 @@ func RunCreateCluster(f *util.Factory, out io.Writer, c *CreateClusterOptions) e
 
 			g := &api.InstanceGroup{}
 			g.Spec.Role = api.InstanceGroupRoleMaster
+			g.Spec.RoleArn = c.MasterIAMRole
 			g.Spec.Subnets = []string{subnet.Name}
 			g.Spec.MinSize = fi.Int32(1)
 			g.Spec.MaxSize = fi.Int32(1)
@@ -417,6 +424,7 @@ func RunCreateCluster(f *util.Factory, out io.Writer, c *CreateClusterOptions) e
 	if len(nodes) == 0 {
 		g := &api.InstanceGroup{}
 		g.Spec.Role = api.InstanceGroupRoleNode
+		g.Spec.RoleArn = c.NodeIAMRole
 
 		g.ObjectMeta.Name = "nodes"
 		instanceGroups = append(instanceGroups, g)
@@ -426,6 +434,12 @@ func RunCreateCluster(f *util.Factory, out io.Writer, c *CreateClusterOptions) e
 	if c.NodeSize != "" {
 		for _, group := range nodes {
 			group.Spec.MachineType = c.NodeSize
+		}
+	}
+
+	if c.NodeIAMRole != "" {
+		for _, group := range nodes {
+			group.Spec.RoleArn = c.NodeIAMRole
 		}
 	}
 
@@ -463,6 +477,12 @@ func RunCreateCluster(f *util.Factory, out io.Writer, c *CreateClusterOptions) e
 	if c.MasterSize != "" {
 		for _, group := range masters {
 			group.Spec.MachineType = c.MasterSize
+		}
+	}
+
+	if c.MasterIAMRole != "" {
+		for _, group := range masters {
+			group.Spec.RoleArn = c.MasterIAMRole
 		}
 	}
 
