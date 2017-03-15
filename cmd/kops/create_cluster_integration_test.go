@@ -18,17 +18,18 @@ package main
 
 import (
 	"bytes"
-	"github.com/golang/glog"
 	"io/ioutil"
+	"path"
+	"strings"
+	"testing"
+	"time"
+
+	"github.com/golang/glog"
 	"k8s.io/kops/cmd/kops/util"
 	"k8s.io/kops/pkg/apis/kops"
 	"k8s.io/kops/pkg/diff"
 	k8sapi "k8s.io/kubernetes/pkg/api"
 	"k8s.io/kubernetes/pkg/apis/meta/v1"
-	"path"
-	"strings"
-	"testing"
-	"time"
 )
 
 var MagicTimestamp = v1.Time{Time: time.Date(2017, 1, 1, 0, 0, 0, 0, time.UTC)}
@@ -37,6 +38,12 @@ var MagicTimestamp = v1.Time{Time: time.Date(2017, 1, 1, 0, 0, 0, 0, time.UTC)}
 func TestCreateClusterMinimal(t *testing.T) {
 	runCreateClusterIntegrationTest(t, "../../tests/integration/create_cluster/minimal", "v1alpha1")
 	runCreateClusterIntegrationTest(t, "../../tests/integration/create_cluster/minimal", "v1alpha2")
+}
+
+// TestCreateClusterCustomIamRole runs kops create cluster custom_iam_role.example.com --zones us-test-1a
+func TestCreateClusterCustomIamRole(t *testing.T) {
+	runCreateClusterIntegrationTest(t, "../../tests/integration/create_cluster/custom_iam_role", "v1alpha1")
+	runCreateClusterIntegrationTest(t, "../../tests/integration/create_cluster/custom_iam_role", "v1alpha2")
 }
 
 // TestCreateClusterHA runs kops create cluster ha.example.com --zones us-test-1a,us-test-1b,us-test-1c --master-zones us-test-1a,us-test-1b,us-test-1c
