@@ -393,6 +393,7 @@ func autoConvert_v1alpha2_ClusterSpec_To_kops_ClusterSpec(in *ClusterSpec, out *
 	out.KubernetesAPIAccess = in.KubernetesAPIAccess
 	out.IsolateMasters = in.IsolateMasters
 	out.UpdatePolicy = in.UpdatePolicy
+	out.RoleCustomIamRoles = in.RoleCustomIamRoles
 	out.AdditionalPolicies = in.AdditionalPolicies
 	if in.EtcdClusters != nil {
 		in, out := &in.EtcdClusters, &out.EtcdClusters
@@ -554,6 +555,7 @@ func autoConvert_kops_ClusterSpec_To_v1alpha2_ClusterSpec(in *kops.ClusterSpec, 
 	out.KubernetesAPIAccess = in.KubernetesAPIAccess
 	out.IsolateMasters = in.IsolateMasters
 	out.UpdatePolicy = in.UpdatePolicy
+	out.RoleCustomIamRoles = in.RoleCustomIamRoles
 	out.AdditionalPolicies = in.AdditionalPolicies
 	if in.EtcdClusters != nil {
 		in, out := &in.EtcdClusters, &out.EtcdClusters
@@ -1060,7 +1062,6 @@ func Convert_kops_InstanceGroupList_To_v1alpha2_InstanceGroupList(in *kops.Insta
 
 func autoConvert_v1alpha2_InstanceGroupSpec_To_kops_InstanceGroupSpec(in *InstanceGroupSpec, out *kops.InstanceGroupSpec, s conversion.Scope) error {
 	out.Role = kops.InstanceGroupRole(in.Role)
-	out.RoleArn = in.RoleArn
 	out.Image = in.Image
 	out.MinSize = in.MinSize
 	out.MaxSize = in.MaxSize
@@ -1082,7 +1083,6 @@ func Convert_v1alpha2_InstanceGroupSpec_To_kops_InstanceGroupSpec(in *InstanceGr
 
 func autoConvert_kops_InstanceGroupSpec_To_v1alpha2_InstanceGroupSpec(in *kops.InstanceGroupSpec, out *InstanceGroupSpec, s conversion.Scope) error {
 	out.Role = InstanceGroupRole(in.Role)
-	out.RoleArn = in.RoleArn
 	out.Image = in.Image
 	out.MinSize = in.MinSize
 	out.MaxSize = in.MaxSize

@@ -26,6 +26,9 @@ spec:
   networking:
     kubenet: {}
   nonMasqueradeCIDR: 100.64.0.0/10
+  roleCustomIamRoles:
+    Master: foo
+    Node: bar
   topology:
     dns:
       type: Public
@@ -50,7 +53,6 @@ spec:
   maxSize: 1
   minSize: 1
   role: Master
-  roleArn: foo
   zones:
   - us-test-1a
 
@@ -69,6 +71,5 @@ spec:
   maxSize: 2
   minSize: 2
   role: Node
-  roleArn: bar
   zones:
   - us-test-1a

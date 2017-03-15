@@ -26,6 +26,9 @@ spec:
   networking:
     kubenet: {}
   nonMasqueradeCIDR: 100.64.0.0/10
+  roleCustomIamRoles:
+    Master: foo
+    Node: bar
   sshAccess:
   - 0.0.0.0/0
   subnets:
@@ -54,7 +57,6 @@ spec:
   maxSize: 1
   minSize: 1
   role: Master
-  roleArn: foo
   subnets:
   - us-test-1a
 
@@ -73,6 +75,5 @@ spec:
   maxSize: 2
   minSize: 2
   role: Node
-  roleArn: bar
   subnets:
   - us-test-1a

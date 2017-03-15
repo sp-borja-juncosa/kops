@@ -50,7 +50,6 @@ const RolePolicyTemplate = `{
 func (b *IAMModelBuilder) Build(c *fi.ModelBuilderContext) error {
 	// Collect the roles in use
 	var roles []kops.InstanceGroupRole
-	iamRolesArn := make(map[kops.InstanceGroupRole]string)
 	for _, ig := range b.InstanceGroups {
 		found := false
 		for _, r := range roles {
@@ -61,21 +60,21 @@ func (b *IAMModelBuilder) Build(c *fi.ModelBuilderContext) error {
 		if !found {
 			roles = append(roles, ig.Spec.Role)
 		}
-		if ig.Spec.RoleArn != "" {
-			iamRolesArn[ig.Spec.Role] = ig.Spec.RoleArn
-		}
 	}
 
 	// Generate IAM objects etc for each role
 	for _, role := range roles {
 		name := b.IAMName(role)
+		roleAsString := reflect.ValueOf(role).String()
 
 		var iamRole *awstasks.IAMRole
 
+		customIamRoles := b.Cluster.Spec.RoleCustomIamRoles
+
 		// If we've specified an IAMRoleArn for this cluster role,
 		// do not create a new one
-		if iamRolesArn[role] != "" {
-			arn := iamRolesArn[role]
+		if customIamRoles[roleAsString] != "" {
+			arn := customIamRoles[roleAsString]
 			rs := strings.Split(arn, "/")
 			roleName := rs[len(rs)-1]
 			iamRole = &awstasks.IAMRole{

@@ -360,7 +360,6 @@ func RunCreateCluster(f *util.Factory, out io.Writer, c *CreateClusterOptions) e
 
 			g := &api.InstanceGroup{}
 			g.Spec.Role = api.InstanceGroupRoleMaster
-			g.Spec.RoleArn = c.MasterIAMRole
 			g.Spec.Subnets = []string{subnet.Name}
 			g.Spec.MinSize = fi.Int32(1)
 			g.Spec.MaxSize = fi.Int32(1)
@@ -424,7 +423,6 @@ func RunCreateCluster(f *util.Factory, out io.Writer, c *CreateClusterOptions) e
 	if len(nodes) == 0 {
 		g := &api.InstanceGroup{}
 		g.Spec.Role = api.InstanceGroupRoleNode
-		g.Spec.RoleArn = c.NodeIAMRole
 
 		g.ObjectMeta.Name = "nodes"
 		instanceGroups = append(instanceGroups, g)
@@ -434,12 +432,6 @@ func RunCreateCluster(f *util.Factory, out io.Writer, c *CreateClusterOptions) e
 	if c.NodeSize != "" {
 		for _, group := range nodes {
 			group.Spec.MachineType = c.NodeSize
-		}
-	}
-
-	if c.NodeIAMRole != "" {
-		for _, group := range nodes {
-			group.Spec.RoleArn = c.NodeIAMRole
 		}
 	}
 
@@ -480,11 +472,18 @@ func RunCreateCluster(f *util.Factory, out io.Writer, c *CreateClusterOptions) e
 		}
 	}
 
+	var customIamRoles map[string]string
+	customIamRoles = make(map[string]string)
+
 	if c.MasterIAMRole != "" {
-		for _, group := range masters {
-			group.Spec.RoleArn = c.MasterIAMRole
-		}
+		customIamRoles["Master"] = c.MasterIAMRole
 	}
+
+	if c.NodeIAMRole != "" {
+		customIamRoles["Node"] = c.NodeIAMRole
+	}
+
+	cluster.Spec.RoleCustomIamRoles = customIamRoles
 
 	if c.DNSZone != "" {
 		cluster.Spec.DNSZone = c.DNSZone

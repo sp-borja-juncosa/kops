@@ -55,8 +55,6 @@ type InstanceGroupSpec struct {
 	// Type determines the role of instances in this group: masters or nodes
 	Role InstanceGroupRole `json:"role,omitempty"`
 
-	RoleArn string `json:"roleArn,omitempty"`
-
 	Image   string `json:"image,omitempty"`
 	MinSize *int32 `json:"minSize,omitempty"`
 	MaxSize *int32 `json:"maxSize,omitempty"`
